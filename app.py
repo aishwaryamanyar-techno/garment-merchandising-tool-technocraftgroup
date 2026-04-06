@@ -14,7 +14,7 @@ creds = ServiceAccountCredentials.from_json_keyfile_name(
 
 client = gspread.authorize(creds)
 
-sheet = client.open("GARMENT_ORDER_TRACKING_MASTER").sheet1
+sheet = client.open_by_key("1rX-ZBIOs8FxVE_K3p98OGoxadhsqpOXaIqGDGYg1rjo").sheet1
 
 st.title("Garment Merchandising Order Tracking Tool")
 
