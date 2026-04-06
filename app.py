@@ -1,5 +1,22 @@
 import streamlit as st
 import pandas as pd
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+
+scope = [
+"https://spreadsheets.google.com/feeds",
+"https://www.googleapis.com/auth/drive"
+]
+
+creds = ServiceAccountCredentials.from_json_keyfile_name(
+"credentials.json", scope
+)
+
+client = gspread.authorize(creds)
+
+sheet = client.open_by_key(
+"1rX-ZBIOs8FxVE_K3p98OGoxadhsqpOXaIqGDGYg1rjo"
+).sheet1
 
 st.title("Garment Merchandising Order Tracking Tool")
 
@@ -72,60 +89,43 @@ st.write("TPT Rs/Minute:", tpt_rs_min)
 
 if st.button("Submit Order"):
 
-    file_path = r"G:\My Drive\MASTER FILE FOR GARMENT MERCHANDISING ORDER TRACKING.xlsx"
+    row = [
+        order_receipt_date,
+        sales_order,
+        delivery_date,
+        market,
+        marketing_head,
+        merchant_name,
+        customer_name,
+        fabric_desc,
+        style,
+        product_category,
+        sam,
+        sam_category,
+        order_qty,
+        sale_rate,
+        usd_rate,
+        export_incentive,
+        freight,
+        fabric_source,
+        fabric_body_tpt,
+        fabric1_cost,
+        fabric1_usage,
+        fabric2_cost,
+        fabric2_usage,
+        trims,
+        outsource,
+        sale_rate_rs,
+        sale_value_lacs,
+        incentive_rs,
+        net_sale_price,
+        net_sale_value,
+        fabric_cost,
+        tpt_rs_pcs,
+        tpt_percent,
+        tpt_rs_min
+    ]
 
-    data = {
-        "Order Receipt Date": order_receipt_date,
-        "Sales Order No (ERP)": sales_order,
-        "Committed Delivery Date": delivery_date,
-        "Market": market,
-        "Marketing Head": marketing_head,
-        "Merchant Name": merchant_name,
-        "Customer Name": customer_name,
-        "Fabric Quality Description": fabric_desc,
-        "Style": style,
-        "Product Category": product_category,
-        "SAM": sam,
-        "SAM Category": sam_category,
-        "Order Qnty Pcs": order_qty,
-        "Sale Rate In Rs./USD": sale_rate,
-        "Rs./USD": usd_rate,
-        "Export Incentives Value": export_incentive,
-        "Garment Freight Rs/Pcs": freight,
-        "Fabric Source": fabric_source,
-        "Fabric Body TPT Rs/Kg": fabric_body_tpt,
-        "Fabric-1 Landed Cost": fabric1_cost,
-        "Fabric-1 Usage": fabric1_usage,
-        "Fabric-2 Landed Cost": fabric2_cost,
-        "Fabric-2 Usage": fabric2_usage,
-        "Thread & Trims Rs/Piece": trims,
-        "Outsource Rs/Piece": outsource,
-
-        "Sale Rate Rs/Pcs": sale_rate_rs,
-        "Sale Value in Lacs": sale_value_lacs,
-        "Incentive Rs/Pcs": incentive_rs,
-        "Net Sale Price": net_sale_price,
-        "Net Sale Value": net_sale_value,
-        "Fabric Cost Rs/Pcs": fabric_cost,
-        "TPT Rs/Pcs": tpt_rs_pcs,
-        "TPT %": tpt_percent,
-        "TPT Rs/Minute": tpt_rs_min
-    }
-
-    df = pd.DataFrame([data])
-
-    try:
-        old = pd.read_excel(file_path)
-
-        sr_no = len(old) + 1
-        df.insert(0, "Sr No", sr_no)
-
-        new = pd.concat([old, df], ignore_index=True)
-
-    except:
-        df.insert(0, "Sr No", 1)
-        new = df
-
-    new.to_excel(file_path, index=False)
+    sheet.append_row(row)
 
     st.success("Order Saved Successfully")
