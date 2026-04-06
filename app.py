@@ -124,6 +124,6 @@ if st.button("Submit Order"):
         tpt_rs_min
     ]
 
-    sheet.append_row(row)
+    sheet.append_row([str(x) if x is not None else "" for x in row])
 
     st.success("Order Saved Successfully")
